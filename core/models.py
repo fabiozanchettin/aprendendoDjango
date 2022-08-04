@@ -1,3 +1,28 @@
 from django.db import models
+from stdimage.models import StdImageField
+#signals
+from django.db.models import signals
+from django.template.defaultfilters import slugify
 
-# Create your models here.
+class Base(models.Model):
+    criado = models.DateField('Data de Criação', auto_now_add=True)
+    modificado = models.DateField('Data de atualizacao', auto_now=True)
+    ativo = models.DateField('ativo?', default=True)
+
+    class Meta:
+        abstract = True
+
+class Produto(Base):
+    nome = models.CharField('nome', max_length=100)
+    preco = models.DecimalField('preco', max_digits=8, decimal_places=2)
+    estoque = models.IntegerField('estoque')
+    imagem = StdImageField('imagem', upload_to='produtos', variations={'thumb':(124,124)})
+    slug = models.SlugField('slug', max_length=100, blank=True, editable=False)
+
+    def __str__(self):
+        return self.nome
+
+def produto_pre_save(signal, instance, sender, **kwargs):
+    instance.slug = slugify(instance.nome)
+
+signals.pre_save.connect(produto_pre_save, sender=Produto)

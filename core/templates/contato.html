@@ -8,8 +8,8 @@
 
 </head>
 <body>
-<div class="container">
-     <h1>contato</h1>
+<div class="container" style="width:50%;">
+     <h1>Contato</h1>
     {% bootstrap_messages %}
     <form action="{% url 'contato' %}" method="post" class="form" autocomplete="off">
         {% csrf_token %}
